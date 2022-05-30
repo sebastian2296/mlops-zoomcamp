@@ -1,0 +1,4 @@
+artifact_location: ../sqlite:///mlflow.db/2
+experiment_id: '2'
+lifecycle_stage: active
+name: nyc_taxi_exp
