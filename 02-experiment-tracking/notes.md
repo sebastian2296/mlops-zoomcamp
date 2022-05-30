@@ -65,7 +65,7 @@ The end result of the (simple) experiment tracking looks something like this:
 
 ## Experiment tracking with MLflow
 
-#### Add hyperparameter tuning to the notebook 
+### Add hyperparameter tuning to the notebook 
 
 We'll use Xgboost because it's much easier to have multiple runs for each hyperparameter.
 
@@ -132,12 +132,12 @@ best_result = fmin(
     trials=Trials()
 )
 ```
-#### How this looks in MLflow
+### How this looks in MLflow
 
 A contour plot that shows different RMSE results for multiple hyperparameter sets (model runs):
 
 ![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/mlflow_hyperparameter_tuning.png)
 
-#### Select the best model
+### Select the best model
 
-#### Autolog
+### Autolog
