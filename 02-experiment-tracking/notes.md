@@ -61,3 +61,83 @@ with mlflow.start_run():
 The end result of the (simple) experiment tracking looks something like this:
 
 ![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/mlflow_getting_started.png)
+
+
+## Experiment tracking with MLflow
+
+#### Add hyperparameter tuning to the notebook 
+
+We'll use Xgboost because it's much easier to have multiple runs for each hyperparameter.
+
+We'll start by importing all the libraries needed, like so:
+
+```python
+import xgboost as xgb
+
+from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+from hyperopt.pyll import scope
+```
+
+*Hyperopt* is a library that uses bayesian methods to find the best set of hyperparameters.
+
+* `fmin` method to minimize the output of the object function. 
+* `tpe` algorithm that controls the above logic.
+* `hp` contains different methods that set the search spaces for each hyperparameter.
+* `STATUS_OK` signal that we'll sent to *hyperopt* to tell that the current run completed succesfully.
+* `Trials` keeps track of information for each run.
+
+We'll define a function that we'll pass to the `fmin` method in order to log all the results of running *xgboost* with different sets of hyperparameters. 
+
+```python
+def objective(params):
+    with mlflow.start_run():
+        mlflow.set_tag("model", "xgboost")
+        mlflow.log_params(params)
+        booster = xgb.train(
+            params=params,
+            dtrain=train,
+            num_boost_round=1000,
+            evals=[(valid, 'validation')],
+            early_stopping_rounds=50
+        )
+        y_pred = booster.predict(valid)
+        rmse = mean_squared_error(y_val, y_pred, squared=False)
+        mlflow.log_metric("rmse", rmse)
+
+    return {'loss': rmse, 'status': STATUS_OK}
+```
+
+Lastly, we'll iterate 50 times (50 different sets of hyperparemeters) to find the specfication that minimizes the `RMSE`:
+
+* Define the search space (range of values each hyperparameter can take):
+
+```python
+search_space = {
+    'max_depth': scope.int(hp.quniform('max_depth', 4, 100, 1)),
+    'learning_rate': hp.loguniform('learning_rate', -3, 0),
+    'reg_alpha': hp.loguniform('reg_alpha', -5, -1),
+    'reg_lambda': hp.loguniform('reg_lambda', -6, -1),
+    'min_child_weight': hp.loguniform('min_child_weight', -1, 3),
+    'objective': 'reg:linear',
+    'seed': 42
+}
+```
+* Minimize the output value (`RMSE`):
+ ```python
+best_result = fmin(
+    fn=objective,
+    space=search_space,
+    algo=tpe.suggest,
+    max_evals=50,
+    trials=Trials()
+)
+```
+#### How this looks in MLflow
+
+A contour plot that shows different RMSE results for multiple hyperparameter sets (model runs):
+
+![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/mlflow_hyperparameter_tuning.png)
+
+#### Select the best model
+
+#### Autolog
