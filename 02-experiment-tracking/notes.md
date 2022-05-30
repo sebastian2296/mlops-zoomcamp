@@ -57,3 +57,7 @@ with mlflow.start_run():
 * `mlflow.log_param()` tracks particular values of certain parameters (data path in this instance) to facilitate reproducibility.
 
 * `mlflow.log_metric()` logs values of hyperparameters that the model takes as inputs.
+
+The end result of the (simple) experiment tracking looks something like this:
+
+![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/img/mlflow_getting_started.png)
