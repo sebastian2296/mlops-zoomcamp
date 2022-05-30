@@ -60,4 +60,4 @@ with mlflow.start_run():
 
 The end result of the (simple) experiment tracking looks something like this:
 
-![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/img/mlflow_getting_started.png)
+![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/img/mlflow_getting_started.png](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/mlflow_getting_started.png)
