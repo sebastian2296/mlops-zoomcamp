@@ -1,4 +1,4 @@
-## What is ML-flow
+## What is ML-flow?
 
 MLflow is a python package whose main functionality is to organize, optimize and collect/log information about
 our model's iterations to facilitate reproducibility.
@@ -140,4 +140,44 @@ A contour plot that shows different RMSE results for multiple hyperparameter set
 
 ### Select the best model
 
+There's no gold standard to choose the best model, it will depend on each particular case and what you're looking for in the model. 
+
+In general, we can stick to pick the one with the lowest `RMSE`:
+
+![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/lowest_rmse.png)
+
+The parameters that yielded the lowest `RMSE`:
+
+![alt text](https://github.com/sebastian2296/mlops-zoomcamp/blob/main/02-experiment-tracking/img/params.png)
+
 ### Autolog
+
+Let's use the "best params" of the previous iterations to showcase the autolog feature. 
+
+The autolog feature allows us to track multiple characteristics of our models runs like *feature importance* , the dependecies and the model artifacts. This feature can be activated by adding: 
+
+`mlflow.xgboost.autolog()` before the model train:
+
+```python
+params = {
+    "earning_rate":0.24049559707914156,
+    "max_depth":19,
+    "min_child_weight":1.5402061054017244,
+    "objective": "reg:linear",
+    "reg_alpha": 0.2314863926934718,
+    "reg_lambda":0.10273237284095527,
+    "seed": 42
+    }
+
+#We can log results with the previous approach "with mlflow.start_run" but xgboost allows us to use autolog
+
+mlflow.xgboost.autolog()
+
+booster = xgb.train(
+    params=params,
+    dtrain=train,
+    num_boost_round=1000,
+    evals=[(valid, 'validation')],
+    early_stopping_rounds=50
+)
+```
